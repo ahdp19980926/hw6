@@ -1,0 +1,15 @@
+close all;clear all;clc;
+f=im2double(imread('lena.bmp'));
+PSF=fspecial('motion',50,-45);
+g=imfilter(f,PSF,'circular');
+g1=imnoise(g,'gaussian',0,10/512/512);
+%sn=abs(fft2(noise)).^2;
+%sf=abs(fft2(f)).^2;
+%NACORR=fftshift(real(ifft2(sn)));
+%IACORR=fftshift(real(ifft2(sf)));
+K=0.01;
+g2=deconvwnr(g1,PSF,K);
+subplot(2,2,1),imshow(f);title('Ô­Í¼Ïñ');
+subplot(2,2,2),imshow(g);title('Ä£ºýÍ¼Ïñ');
+subplot(2,2,3),imshow(g1);title('¼ÓÔëÉùºóÍ¼Ïñ');
+subplot(2,2,4),imshow(g2);title('»Ö¸´ºóÍ¼Ïñ');

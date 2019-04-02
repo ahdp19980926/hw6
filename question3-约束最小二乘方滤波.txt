@@ -1,0 +1,19 @@
+close all;clear all;clc;
+f=im2double(imread('lena.bmp'));
+PSF=fspecial('motion',50,-45);%
+g=imfilter(f,PSF,'circular');
+g1=imnoise(g,'gaussian',0,10/512/512);
+p=[0 -1 0;-1 4 -1;0 -1 0];%拉普拉斯模板
+P=fft2(p,512,512);
+%P=psf2otf(p,[512,512]);
+gama=0.01;
+G=fft2(g);
+Pf=fft2(PSF,512,512);
+%Pf=psf2otf(PSF,[512,512]);
+numerator = conj(Pf);%H函数的复共轭
+denominator = Pf.^2 + gama*(P.^2);
+g2 = ifft2( numerator.*G./ denominator );%约束最小二乘方滤波在频率域中的表达式
+subplot(2,2,1),imshow(f);title('原图像');
+subplot(2,2,2),imshow(g);title('模糊图像');
+subplot(2,2,3),imshow(g1);title('加噪声后图像');
+subplot(2,2,4),imshow(g2);title('恢复后图像');
